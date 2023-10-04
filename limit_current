@@ -1,0 +1,1 @@
+echo 100000 > /sys/class/power_supply/battery/input_current_max

@@ -1,0 +1,9 @@
+# ctype=`cat /sys/class/power_supply/battery/charge_type`
+capacity=`cat /sys/class/power_supply/battery/capacity`
+charging=`cat /sys/class/power_supply/battery/charging_enabled`
+# health=`cat /sys/class/power_supply/battery/health`
+status=`cat /sys/class/power_supply/battery/status`
+current=`cat /sys/class/power_supply/battery/current_now`
+voltage=`cat /sys/class/power_supply/battery/voltage_now`
+printf "%s # %s # %s # %s # %s #\n" "Capacity: ${capacity}" "Charging: ${charging}" "Voltage: ${voltage}" "Current: ${current}" "Status: ${status}"
+
