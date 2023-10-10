@@ -1,9 +1,68 @@
-# ctype=`cat /sys/class/power_supply/battery/charge_type`
-capacity=`cat /sys/class/power_supply/battery/capacity`
-charging=`cat /sys/class/power_supply/battery/charging_enabled`
-# health=`cat /sys/class/power_supply/battery/health`
-status=`cat /sys/class/power_supply/battery/status`
-current=`cat /sys/class/power_supply/battery/current_now`
-voltage=`cat /sys/class/power_supply/battery/voltage_now`
-printf "%s # %s # %s # %s # %s #\n" "Capacity: ${capacity}" "Charging: ${charging}" "Voltage: ${voltage}" "Current: ${current}" "Status: ${status}"
+#!/bin/bash
 
+# max_voltage=${1:-3800}
+max_voltage=3800
+
+charging_enabled="/sys/class/power_supply/battery/charging_enabled"
+
+log() {
+   date=`date +[%Y.%m.%d\ %H:%M:%S]`
+   echo "$date $1"
+}
+
+status() {
+   # ctype=`cat /sys/class/power_supply/battery/charge_type`
+   capacity=`cat /sys/class/power_supply/battery/capacity`
+   charging=`cat $charging_enabled`
+   # health=`cat /sys/class/power_supply/battery/health`
+   status=`cat /sys/class/power_supply/battery/status`
+   current=`cat /sys/class/power_supply/battery/current_now`
+   voltage=`cat /sys/class/power_supply/battery/voltage_now`
+   temp=`cat /sys/class/power_supply/battery/temp`
+   echo "Capacity: $capacity # Charging: $charging # Voltage: $voltage # Current: $current # Status: $status # Temp: $temp"
+}
+
+# this is needed so charging won't be stopped from protection (/sys/class/power_supply/battery/chg_protect_status)
+last_charge_update=0
+pause_charge() {
+   now=`date +%s`
+   if (( $now < ($last_charge_update + 3600 * 1) )); then # every 7 hours
+      return
+   fi
+   log "Updating charge..."
+   echo 0 > $charging_enabled
+   sleep 3
+   echo 1 > $charging_enabled
+   last_charge_update=$now
+}
+
+update() {
+   pause_charge
+
+   voltage=`cat /sys/class/power_supply/battery/voltage_max`
+   # echo $voltage
+
+   if [[ $voltage != $max_voltage ]]; then
+      log "Updating voltage_max to $max_voltage..."
+      echo $max_voltage > /sys/class/power_supply/battery/voltage_max
+   fi
+}
+
+monitor() {
+   while true
+   do
+      update
+      sleep 60
+   done
+}
+
+case "$1" in
+   update)
+      update
+      ;;
+   monitor)
+      monitor
+      ;;
+   *)
+      status
+esac
