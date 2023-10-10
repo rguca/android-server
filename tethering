@@ -1,0 +1,94 @@
+#!/bin/bash
+
+ip=192.168.0.1
+local_interface=rndis0
+gateway_interface=rmnet_data0
+
+log () {
+   date=`date +[%Y.%m.%d\ %H:%M:%S]`
+   echo "$date $1"
+}
+
+init () {
+   usb_mode=`/system/bin/getprop sys.usb.config`
+   interface_status=`ip address | sed -n "s/.*$local_interface.*state \([A-Z]\+\) .*$/\1/p"`
+   local_address=`ip address | sed -n "s/.*inet \([0-9\.]*\).*$local_interface$/\1/p"`
+
+
+   internet_address=`ip address | sed -n "s/.*inet \([0-9\.]*\).*$gateway_interface$/\1/p"`
+   if [[ -z $internet_address ]]; then
+      log "No interface address found for $gateway_interface"
+      exit
+   fi
+
+   current_gateway=`ip route show table main | sed -n 's/default via \([0-9\.]*\).*/\1/p'`
+}
+init
+
+status () {
+   echo USB mode: $usb_mode
+   echo Interface status: $interface_status
+   echo Local address: $local_address
+   echo Internet address: $internet_address
+   echo Default gateway: $current_gateway
+}
+
+update_usb () {
+   if [[ "$usb_mode" == *"rndis"* ]]; then
+      return;
+   fi
+   log "Changing usb mode..."
+   /system/bin/setprop sys.usb.config rndis
+   sleep 3
+}
+
+update_interface () {
+   if [[ "$interface_status" != "UP" ]]; then
+      log "Enabling interface $local_interface..."
+      ip link set dev $local_interface up
+   fi
+   if [[ "$local_address" != "$ip" ]]; then
+      log "Setting local ip to $ip"
+      ip address flush dev $local_interface
+      ip address add $ip/24 dev $local_interface
+   fi
+}
+
+update_gateway () {
+   if [[ "$internet_address" == "$current_gateway" ]]; then
+      return
+   fi
+   if [[ -n $current_gateway ]]; then
+      log "Removing current gateway..."
+      ip route del default table main
+   fi
+   log "Adding gateway..."
+   ip route add default via $internet_address table main
+}
+
+update () {
+   update_usb
+   update_interface
+   update_gateway
+}
+
+monitor () {
+   while true
+   do
+      update
+      sleep 60
+      init
+   done
+}
+
+case $1 in
+   monitor)
+      monitor
+      ;;
+   update)
+      update
+      ;;
+   *)
+      status
+      ;;
+esac
