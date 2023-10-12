@@ -1,4 +1,11 @@
-# Linuxdeploy
+# Android device as linux server
+
+The purpose of this project is to use an (old) android phone as a power efficient linux server.
+Further it contains documentation and scripts for battery protection and USB tethering.
+
+## Setup environment
+
+### Linuxdeploy
 
 * Deploy rootfs from OS. I used Ubuntu core
 * Enable init sysv
@@ -11,7 +18,7 @@
   ```
 
 
-# Termux
+### Termux
 Get SSH server running
 ```
 su
@@ -31,15 +38,28 @@ apt update
 apt install openssh-server --no-install-recommends
 ```
 
-# Webserver (optional)
+### Webserver (optional)
 append user www-data to group aid_inet for socket creation
 
 ```
 usermod -aG aid_inet www-data
 ```
 
+## Battery
 
-# USB Tethering
+To preserve battery health, the voltage should be kept around 3.8V.
+This is achieved by altering the contents of file:
+`/sys/class/power_supply/battery/voltage_max`
+
+To bypass the 10h continues charge limit, which will stop charging completely and drain the battery, a pause of 9 seconds is incorporated every 9 hours.
+The 9 seconds result from the daemon checking every 6 seconds.
+This is achieved by altering the contents of file:
+`/sys/class/power_supply/battery/charging_enabled`
+
+
+## USB Tethering
+
+The following commands represent a concept to get USB tethering working:
 
 ```
 # switch usb to rndis mode
