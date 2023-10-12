@@ -52,7 +52,7 @@ This is achieved by altering the contents of file:
 `/sys/class/power_supply/battery/voltage_max`
 
 To bypass the 10h continues charge limit, which will stop charging completely and drain the battery, a pause of 9 seconds is incorporated every 9 hours.
-The 9 seconds result from the daemon checking every 6 seconds.
+The 9 seconds result from the qpnp-smbcharger module checking every 6 seconds.
 This is achieved by altering the contents of file:
 `/sys/class/power_supply/battery/charging_enabled`
 
