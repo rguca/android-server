@@ -26,12 +26,12 @@ status() {
 last_charge_update=0
 pause_charge() {
    now=`date +%s`
-   if (( $now < ($last_charge_update + 3600 * 1) )); then # every 7 hours
+   if (( $now < ($last_charge_update + 3600 * 9) )); then # every 9 hours
       return
    fi
    log "Updating charge..."
    echo 0 > $charging_enabled
-   sleep 3
+   sleep 9 # pause for 9 seconds (protection status check is ever 6 seconds)
    echo 1 > $charging_enabled
    last_charge_update=$now
 }
