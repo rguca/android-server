@@ -66,7 +66,7 @@ The following commands represent a concept to get USB tethering working:
 setprop sys.usb.config rndis
 
 # set ip and enable interface
-ip address add 192.168.0.1/24 dev rndis0
+ip address add 192.168.1.5/24 dev rndis0
 ip link set dev rndis0 up
 
 # enable forwarding (without this no packets between interfacs)
@@ -78,8 +78,13 @@ iptables -F
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 # block incoming traffic for local machine
 iptables -A INPUT -i rmnet_data0 -j DROP
+
 # forward all incoming traffic to router
-iptables -A PREROUTING -i rmnet_data0 -j DNAT --to-destination 192.168.0.2
+# only needed if android is behind firewall
+# iptables -A PREROUTING -i rmnet_data0 -j DNAT --to-destination 192.168.0.2
+
+# masquerade outgoing packets
+# this was already here
 # iptables -t nat -A POSTROUTING -o rmnet_data0 -j MASQUERADE
 
 # add main table to rules
