@@ -3,8 +3,8 @@ apt-get upgrade
 
 apt install python3 python3-venv build-essential python3-dev
 
-useradd -rm homeassistant
-# allow internet access
+useradd -r homeassistant
+# allow socket creation
 usermod -aG aid_inet homeassistant
 
 mkdir /etc/homeassistant
