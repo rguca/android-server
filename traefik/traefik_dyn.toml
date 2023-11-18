@@ -1,0 +1,27 @@
+[http.services]
+  [http.services.traefik.loadBalancer]
+    [[http.services.traefik.loadBalancer.servers]]
+      url = "http://127.0.0.1:8080/"
+  [http.services.pihole.loadBalancer]
+    [[http.services.pihole.loadBalancer.servers]]
+      url = "http://127.0.0.1:8081/"
+  [http.services.hass.loadBalancer]
+    [[http.services.hass.loadBalancer.servers]]
+      url = "http://127.0.0.1:8123/"
+
+[http.routers]
+  [http.routers.traefik]
+    rule = "Host(`traefik`)"
+    service = "traefik"
+  [http.routers.pihole]
+    rule = "Host(`pi.hole`, `pihole`)"
+    service = "pihole"
+    middlewares = ["pihole-redirect"]
+  [http.routers.hass]
+    rule = "Host(`homeassistant`)"
+    service = "hass"
+
+[http.middlewares]
+  [http.middlewares.pihole-redirect.redirectRegex]
+    regex = "^https?://pihole/$"
+    replacement = "${0}admin/"

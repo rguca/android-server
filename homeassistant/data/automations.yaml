@@ -1,0 +1,15 @@
+- id: '1699384295439'
+  alias: Blink
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: '*'
+    minutes: '*'
+    seconds: /10
+  condition: []
+  action:
+  - type: toggle
+    device_id: 9ebd00c72c5e68901952706d71294a74
+    entity_id: 317ca348165b51182d1f581849eabe21
+    domain: light
+  mode: single

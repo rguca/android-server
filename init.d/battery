@@ -11,7 +11,7 @@
 
 name="battery"
 
-dir="/root"
+dir="/config"
 cmd="./$name monitor"
 cmd_status="./$name"
 user=""

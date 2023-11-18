@@ -6,7 +6,7 @@
 
 name="traefik"
 
-dir="/root/traefik"
+dir="/config/traefik"
 cmd="$name --configFile=traefik.toml"
 # cmd_status="./$name"
 # user=""

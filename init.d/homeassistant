@@ -6,7 +6,7 @@
 
 name="homeassistant"
 
-dir="/home/homeassistant"
+dir="/config/homeassistant"
 cmd="./$name"
 # cmd_status="./$name"
 user="homeassistant"

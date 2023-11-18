@@ -3,4 +3,4 @@ trap 'kill 0' EXIT
 
 cd /etc/homeassistant
 source bin/activate
-hass
+hass -c /config/homeassistant/data --log-file /var/log/homeassistant.log
