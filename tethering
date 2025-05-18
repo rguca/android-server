@@ -34,11 +34,11 @@ status () {
 }
 
 update_usb () {
-   if [[ "$usb_mode" == *"rndis"* ]]; then
+   if [[ "$usb_mode" == *"rndis"*"adb"* ]]; then
       return;
    fi
    log "Changing usb mode..."
-   /system/bin/setprop sys.usb.config rndis
+   /system/bin/setprop sys.usb.config rndis,adb
    sleep 3
 }
 
