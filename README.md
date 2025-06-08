@@ -94,6 +94,6 @@ ip rule add from all lookup main
 # this was created automatically by OS
 # ip route add 192.168.0.0/24 dev rndis0 table main
 
-# without this packets don't reach rmnet_data0 (they still reach rndis0)
+# without this packets don't reach rmnet_data0 (they still reach rndis0). Also check value of /proc/sys/net/ipv4/ip_forward
 ip route add default via <rmnet_data0 IP> dev rmnet_data0 table main
 ```
